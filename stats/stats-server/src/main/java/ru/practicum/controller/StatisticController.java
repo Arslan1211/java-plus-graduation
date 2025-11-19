@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.HitDto;
 import ru.practicum.StatsDto;
@@ -19,6 +20,7 @@ import static ru.practicum.constant.StatisticConstant.DATE_TIME_FORMATTER;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class StatisticController {
     private final StatisticService statisticService;
 

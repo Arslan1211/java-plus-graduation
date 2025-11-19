@@ -3,9 +3,11 @@ package ru.practicum;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +25,7 @@ public class StatsController {
     private final StatsClient statsClient;
 
     @PostMapping("/hit")
-    public HitDto saveHit(@RequestBody @Valid HitDto hitDto) {
+    public ResponseEntity<String> saveHit(@RequestBody @Valid HitDto hitDto) {
         return statsClient.saveHit(hitDto);
     }
 

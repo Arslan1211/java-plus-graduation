@@ -1,70 +1,23 @@
 package ru.practicum;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Service
-@Slf4j
-@AllArgsConstructor
-public class StatsClient {
-    private final RestClient restClient;
-    private final String url;
+@FeignClient(name = "stats-server")
+public interface StatsClient {
 
-    @Autowired
-    public StatsClient(@Value("${statsserver.url}") String serverUrl) {
-        log.info("url: " + serverUrl);
-        restClient = RestClient.builder()
-                .baseUrl(serverUrl)
-                .build();
-        url = serverUrl;
-    }
+    @PostMapping("/hit")
+    ResponseEntity<String> saveHit(@RequestBody HitDto hitDto);
 
-    public HitDto saveHit(HitDto hitDto) {
-        String requestUrl = url + "/hit";
-        return restClient.post()
-                .uri(requestUrl)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(hitDto)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (req, res) -> {
-                    throw new RuntimeException("StatsService ошибка: " + res.getStatusText());
-                })
-                .body(HitDto.class);
-    }
-
-    public List<StatsDto> getStats(String start, String end, List<String> uris, Boolean unique) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-                .path("/stats")
-                .queryParam("start", start)
-                .queryParam("end", end)
-                .queryParam("unique", unique);
-
-        if (uris != null && !uris.isEmpty()) {
-            builder.queryParam("uris", String.join(",", uris));
-        }
-
-        String fullUrl = builder.build().toUriString();
-        log.info("URL для запроса: {}", fullUrl);
-
-        List<StatsDto> stats = restClient.get()
-                .uri(fullUrl)
-                .retrieve()
-                .body(new ParameterizedTypeReference<>() {
-                });
-
-        log.info("=== Получены статистические данные ===");
-        stats.forEach(stat -> log.info("URI: {}, Hits: {}", stat.getUri(), stat.getHits()));
-        log.info("====================================");
-        return stats;
-    }
+    @GetMapping("/stats")
+    List<StatsDto> getStats(@RequestParam String start,
+                            @RequestParam String end,
+                            @RequestParam(required = false) List<String> uris,
+                            @RequestParam(defaultValue = "false") Boolean unique);
 }

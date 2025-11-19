@@ -1,6 +1,20 @@
+server:
+  port: 0                       # Динамический порт
+
 spring:
   application:
-    name: stats-server
+    name: stats-server          # Имя сервиса для регистрации в Eureka
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: config-server
+      fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
 
   datasource:
     url: jdbc:postgresql://localhost:6541/ewm-stats
@@ -15,8 +29,15 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
-server:
-  port: 9090
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    instance:
+      preferIpAddress: true
+      hostname: localhost
+      instance-id: "${spring.application.name}:${random.value}"
+      leaseRenewalIntervalInSeconds: 10
 
 logging:
   level:

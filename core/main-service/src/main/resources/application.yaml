@@ -1,17 +1,7 @@
-statsserver:
-#  statsserver.url: http://localhost:9090   # если запускаем на хосте
-  statsserver.url: http://stats-server:9090 # если запускаем в контейнере
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-
 server:
-  port: 8080
+  port: 0                          # Динамический порт
 
 spring:
-  application:
-    name: ewm-service
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:6542/main_db
@@ -20,13 +10,28 @@ spring:
     hikari:
       connection-timeout: 30000     # таймаут соединения
       maximum-pool-size: 10         # максимальный размер пула соединений
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 
-logging:
-  level:
-    org.springframework.orm.jpa: INFO
-    org.springframework.transaction: INFO
-    org.springframework.transaction.interceptor: TRACE
-    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
-    org.hibernate.sql: DEBUG
-    org.hibernate.type: TRACE
-    org.hibernate.orm.jdbc.bind: TRACE
+  application:
+    name: main-service            # Имя сервиса для регистрации в Eureka
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: config-server
+      fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    instance-id: "${spring.application.name}:${random.value}"
