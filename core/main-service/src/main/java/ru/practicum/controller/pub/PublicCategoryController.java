@@ -1,4 +1,4 @@
-package ru.practicum.controller.publicEndpoint;
+package ru.practicum.controller.pub;
 
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

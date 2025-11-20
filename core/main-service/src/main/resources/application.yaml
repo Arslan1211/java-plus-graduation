@@ -1,23 +1,9 @@
-server:
-  port: 0                          # Динамический порт
-
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6542/main_db
-    username: root
-    password: "root"               # пароль в кавычках, особенно если содержит спецсимволы
-    hikari:
-      connection-timeout: 30000     # таймаут соединения
-      maximum-pool-size: 10         # максимальный размер пула соединений
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-
   application:
     name: main-service            # Имя сервиса для регистрации в Eureka
   config:
     import: "configserver:"
+
   cloud:
     config:
       discovery:
@@ -31,7 +17,17 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
   instance:
-    hostname: localhost
+    preferIpAddress: true
     instance-id: "${spring.application.name}:${random.value}"
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: TRACE
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.hibernate.sql: DEBUG
+    org.hibernate.type: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE

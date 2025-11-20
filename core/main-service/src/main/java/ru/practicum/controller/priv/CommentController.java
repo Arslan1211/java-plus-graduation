@@ -1,4 +1,4 @@
-package ru.practicum.controller.privateEndpoint;
+package ru.practicum.controller.priv;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

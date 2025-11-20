@@ -1,11 +1,9 @@
-server:
-  port: 0                       # Динамический порт
-
 spring:
   application:
     name: stats-server          # Имя сервиса для регистрации в Eureka
   config:
     import: "configserver:"
+
   cloud:
     config:
       discovery:
@@ -16,28 +14,13 @@ spring:
         useRandomPolicy: true
         max-interval: 6000
 
-  datasource:
-    url: jdbc:postgresql://localhost:6541/ewm-stats
-    username: root
-    password: "root"               # пароль в кавычках, особенно если содержит спецсимволы
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      connection-timeout: 30000     # таймаут соединения
-      maximum-pool-size: 10         # максимальный размер пула соединений
-
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-    instance:
-      preferIpAddress: true
-      hostname: localhost
-      instance-id: "${spring.application.name}:${random.value}"
-      leaseRenewalIntervalInSeconds: 10
+      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
+  instance:
+    preferIpAddress: true
+    instance-id: "${spring.application.name}:${random.value}"
 
 logging:
   level:

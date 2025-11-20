@@ -1,4 +1,4 @@
-package ru.practicum.controller.adminEndpoint;
+package ru.practicum.controller.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

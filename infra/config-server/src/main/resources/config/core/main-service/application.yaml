@@ -1,9 +1,9 @@
 spring:
   application:
-    name: stats-server                    # Имя сервиса для регистрации в Eureka и идентификации
+    name: main-service                    # Имя сервиса для регистрации в Eureka и идентификации
 
   datasource:
-    url: jdbc:postgresql://localhost:6541/ewm-stats
+    url: jdbc:postgresql://localhost:6542/main_db
     username: root
     password: "root"                      # пароль в кавычках, особенно если содержит спецсимволы
     driverClassName: org.postgresql.Driver

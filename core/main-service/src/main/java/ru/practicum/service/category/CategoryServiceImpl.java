@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long catId) {
-        Category category = validateCategoryExists(catId);
+        Category category = findCategoryOrThrow(catId);
         List<Event> events = eventsRepository.findByCategory(category);
         if (!events.isEmpty()) {
             throw new ConflictException("Не удается удалить категорию из-за использования некоторых событий");
@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto updateCategory(Long catId, NewCategoryDto newCategoryDto) {
-        Category category = validateCategoryExists(catId);
+        Category category = findCategoryOrThrow(catId);
         String newName = newCategoryDto.getName();
         String currentName = category.getName();
 
@@ -78,12 +78,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long catId) {
-        Category category = validateCategoryExists(catId);
+        Category category = findCategoryOrThrow(catId);
         log.info("Категория с id {} успешно найдена: {}", category.getId(), category);
         return CategoryMapper.fromToCategoryDto(category);
     }
 
-    private Category validateCategoryExists(Long id) {
+    private Category findCategoryOrThrow(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Категория с id %d не найдена", id)));
     }

@@ -1,4 +1,4 @@
-package ru.practicum.controller.publicEndpoint;
+package ru.practicum.controller.pub;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
