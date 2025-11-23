@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: main-service                    # Имя сервиса для регистрации в Eureka и идентификации
+
+  datasource:
+    url: jdbc:postgresql://localhost:6542/main_db
+    username: root
+    password: "root"                      # пароль в кавычках, особенно если содержит спецсимволы
+    driverClassName: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000           # таймаут соединения (30 секунд)
+      maximum-pool-size: 10               # максимальный размер пула соединений
+
+  jpa:
+    hibernate:
+      ddl-auto: none                      # отключает любые автоматические действия со стороны Hibernate
+    properties:
+      hibernate:
+        show_sql: true                    # включить вывод SQL-запросов, генерируемых Hibernate, в логи приложения
+        format_sql: true                  # форматирует выводимый SQL перед тем, как он попадает в логи
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: 0                                 # Динамический порт
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: INFO
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.hibernate.SQL: DEBUG
